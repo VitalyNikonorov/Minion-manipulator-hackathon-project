@@ -15,6 +15,7 @@ import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
 import java.util.Collection;
+import java.util.Set;
 
 
 /**
@@ -68,9 +69,16 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         for (Beacon beacon: beacons) {
             if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
                 // This is a Eddystone-URL frame
-                String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
+                final String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
                 Log.d(TAG, "I see a beacon transmitting a url: " + url +
                         " approximately " + beacon.getDistance() + " meters away.");
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        scanningFragment.setURL(url);
+                    }
+                });
             }
         }
     }

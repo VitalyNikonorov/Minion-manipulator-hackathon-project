@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -14,6 +15,8 @@ import android.widget.Toast;
 public class ScanningFragment extends Fragment {
 
     public ScanningFragment() { }
+
+    TextView scanstatusTV;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,15 +29,22 @@ public class ScanningFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_scanning, null);
 
         Button connectBtn = (Button) view.findViewById(R.id.connectButton);
+        scanstatusTV = (TextView) view.findViewById(R.id.scanstatus);
 
         connectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "Connected", Toast.LENGTH_SHORT).show();
+                Settings.setAddress(scanstatusTV.getText().toString());
+                Toast.makeText(getActivity(), "Connected to " + Settings.getAddress() , Toast.LENGTH_SHORT).show();
+                        ((MainActivity) getActivity()).connect();
             }
         });
 
         return view;
 
+    }
+
+    public void setURL(String url){
+        scanstatusTV.setText(url);
     }
 }
