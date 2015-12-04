@@ -1,17 +1,20 @@
 package net.nikonorov.behach;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.estimote.sdk.Beacon;
-import com.estimote.sdk.BeaconManager;
-import com.estimote.sdk.Region;
+import org.altbeacon.beacon.Beacon;
+import org.altbeacon.beacon.BeaconConsumer;
+import org.altbeacon.beacon.BeaconManager;
+import org.altbeacon.beacon.BeaconParser;
+import org.altbeacon.beacon.RangeNotifier;
+import org.altbeacon.beacon.Region;
+import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
 import java.util.Collection;
 
@@ -19,9 +22,10 @@ import java.util.Collection;
 /**
  * Created by vitaly on 04.12.15.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BeaconConsumer, RangeNotifier {
 
-    String TAG = "myLog";
+    private static String TAG = "MyLog";
+    private BeaconManager mBeaconManager;
 
     ImageButton buttonUp;
     ImageButton buttonDown;
@@ -33,14 +37,12 @@ public class MainActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        beaconManager = new BeaconManager(this);
 
         buttonDown = (ImageButton)findViewById(R.id.arrow_down);
         buttonUp = (ImageButton)findViewById(R.id.arrow_up);
         buttonLeft = (ImageButton)findViewById(R.id.arrow_left);
         buttonRight = (ImageButton)findViewById(R.id.arrow_right);
         buttonPhoto = (ImageButton)findViewById(R.id.photo);
-
 
         buttonDown.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,54 +52,42 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private BeaconManager beaconManager;
-    private String scanId;
+    @Override
+    public void onResume() {
+        super.onResume();
+        mBeaconManager = BeaconManager.getInstanceForApplication(this.getApplicationContext());
+        // Detect the URL frame:
+        mBeaconManager.getBeaconParsers().add(new BeaconParser().
+                setBeaconLayout("s:0-1=feaa,m:2-2=10,p:3-3:-41,i:4-20v"));
+        mBeaconManager.bind(this);
+    }
+
+    public void onBeaconServiceConnect() {
+        Region region = new Region("all-beacons-region", null, null, null);
+        try {
+            mBeaconManager.startRangingBeaconsInRegion(region);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        mBeaconManager.setRangeNotifier(this);
+    }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        // Should be invoked in #onStart.
-        beaconManager.connect(new BeaconManager.ServiceReadyCallback() {
-            @Override
-            public void onServiceReady() {
-                scanId = beaconManager.startEddystoneScanning();
-                Log.d(TAG, scanId);
-
+    public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
+        for (Beacon beacon: beacons) {
+            if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
+                // This is a Eddystone-URL frame
+                String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
+                Log.d(TAG, "I see a beacon transmitting a url: " + url +
+                        " approximately " + beacon.getDistance() + " meters away.");
             }
-        });
+        }
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        // Should be invoked in #onStop.
-        beaconManager.stopEddystoneScanning(scanId);
+    public void onPause() {
+        super.onPause();
+        mBeaconManager.unbind(this);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        // When no longer needed. Should be invoked in #onDestroy.
-        beaconManager.disconnect();
-    }
-//
-//        @Override
-//    public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-//        for (Beacon beacon: beacons) {
-//            if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x00) {
-//                // This is a Eddystone-UID frame
-//                Identifier namespaceId = beacon.getId1();
-//                Identifier instanceId = beacon.getId2();
-//                Log.d("RangingActivity", "I see a beacon transmitting namespace id: " + namespaceId +
-//                        " and instance id: " + instanceId +
-//                        " approximately " + beacon.getDistance() + " meters away.");
-//                runOnUiThread(new Runnable() {
-//                    public void run() {
-//                        ((TextView)MainActivity.this.findViewById(R.id.tv_status)).setText("Hello world, and welcome to Eddystone!");
-//                    }
-//                });
-//            }
-//        }
-//    }
 
 }
