@@ -3,63 +3,16 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_status"
-        android:text="Some mock"
-        android:textSize="20sp"
-        android:textColor="@android:color/black"/>
-
-    <ImageButton
-        android:id="@+id/photo"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_width="128dp"
-        android:layout_height="64dp"
-        android:background="@android:color/holo_blue_dark"
-        android:src="@drawable/photo"
+        android:text="TEST"
         />
 
-    <ImageButton
-        android:id="@+id/arrow_left"
-        android:layout_centerVertical="true"
-        android:layout_width="128dp"
-        android:layout_height="64dp"
-        android:background="@android:color/holo_blue_dark"
-        android:src="@drawable/arrow_left"
-        />
-
-    <ImageButton
-        android:id="@+id/arrow_right"
-        android:layout_centerVertical="true"
-        android:layout_alignParentRight="true"
-        android:layout_width="128dp"
-        android:layout_height="64dp"
-        android:background="@android:color/holo_blue_dark"
-        android:src="@drawable/arrow_right"
-        />
-
-    <ImageButton
-        android:id="@+id/arrow_up"
-        android:layout_centerHorizontal="true"
-        android:layout_above="@+id/arrow_left"
-        android:layout_width="128dp"
-        android:layout_height="64dp"
-        android:background="@android:color/holo_blue_dark"
-        android:src="@drawable/arrow_up"
-        />
-
-    <ImageButton
-        android:id="@+id/arrow_down"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/arrow_left"
-        android:layout_width="128dp"
-        android:layout_height="64dp"
-        android:background="@android:color/holo_blue_dark"
-        android:src="@drawable/arrow_down"
-        />
-
-
+    <FrameLayout
+        android:id="@+id/fragment_place"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 </RelativeLayout>

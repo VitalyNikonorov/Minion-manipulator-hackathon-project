@@ -21,7 +21,8 @@
 
 
 
-        <activity android:name=".AndroidBeaconLibraryActivity">
+        <activity android:name=".AndroidBeaconLibraryActivity"
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <category android:name="android.intent.category.LAUNCHER"/>
                 <action android:name="android.intent.action.MAIN" />

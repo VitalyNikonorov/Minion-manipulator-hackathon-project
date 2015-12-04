@@ -1,12 +1,10 @@
 package net.nikonorov.behach;
 
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -27,34 +25,27 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     private static String TAG = "MyLog";
     private BeaconManager mBeaconManager;
 
-    ImageButton buttonUp;
-    ImageButton buttonDown;
-    ImageButton buttonLeft;
-    ImageButton buttonRight;
-    ImageButton buttonPhoto;
+    ScanningFragment scanningFragment;
+    ManipulatingFragment manipulatingFragment;
+    FragmentTransaction transaction;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        buttonDown = (ImageButton)findViewById(R.id.arrow_down);
-        buttonUp = (ImageButton)findViewById(R.id.arrow_up);
-        buttonLeft = (ImageButton)findViewById(R.id.arrow_left);
-        buttonRight = (ImageButton)findViewById(R.id.arrow_right);
-        buttonPhoto = (ImageButton)findViewById(R.id.photo);
+        scanningFragment = new ScanningFragment();
+        manipulatingFragment = new ManipulatingFragment();
 
-        buttonDown.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MainActivity.this, "Down Click", Toast.LENGTH_SHORT).show();
-            }
-        });
+        transaction = getFragmentManager().beginTransaction();
+        transaction.add(R.id.fragment_place, scanningFragment);
+        transaction.commit();
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
         mBeaconManager = BeaconManager.getInstanceForApplication(this.getApplicationContext());
         // Detect the URL frame:
         mBeaconManager.getBeaconParsers().add(new BeaconParser().
@@ -82,6 +73,12 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                         " approximately " + beacon.getDistance() + " meters away.");
             }
         }
+    }
+
+    public void connect(){
+        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+        transaction.replace(R.id.fragment_place, manipulatingFragment);
+        transaction.commit();
     }
 
     @Override

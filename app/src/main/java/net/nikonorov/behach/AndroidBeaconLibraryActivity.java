@@ -1,7 +1,5 @@
 package net.nikonorov.behach;
 
-import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
