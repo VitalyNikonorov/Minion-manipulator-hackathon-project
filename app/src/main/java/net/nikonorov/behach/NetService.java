@@ -5,23 +5,28 @@ package net.nikonorov.behach;
  */
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Date;
+import java.util.Random;
 
 /**
  * Created by vitaly on 17.11.15.
  */
 public class NetService extends Service {
 
-    private String                  HOST    = "188.166.49.215";
     private int                     PORT    = 53000;
     boolean                         isWork  = true;
 
@@ -36,8 +41,6 @@ public class NetService extends Service {
     public void onCreate() {
         super.onCreate();
         Log.d(LOG_TAG, "onCreate");
-
-        new Connector().start();
     }
 
     @Override
@@ -81,6 +84,7 @@ public class NetService extends Service {
 
     public void task(){
         Log.d(LOG_TAG, "TASK");
+        new Connector().start();
     }
 
     private class Connector extends Thread{
@@ -112,9 +116,8 @@ public class NetService extends Service {
         @Override
         public void run() {
             int readBytes = 0;
-            byte[] buffer = new byte[2];
+            byte[] buffer = new byte[256];
             String temp = null;
-            int bracketCount = 0;
 
             StringBuilder sb = new StringBuilder();
             while (isWork) {
@@ -124,46 +127,45 @@ public class NetService extends Service {
                     e.printStackTrace();
                 }
                 if (readBytes != -1) {
-
                     temp = new String(buffer);
-
-                    if (temp.lastIndexOf("{") != -1){
-                        if (temp.lastIndexOf("{") != temp.indexOf("{")) {
-                            bracketCount += 2;
-                        }else{
-                            bracketCount++;
-                        }
-                    }
-
-                    if (temp.lastIndexOf("}") != -1){
-                        if (temp.lastIndexOf("}") != temp.indexOf("}")) {
-                            bracketCount -= 2;
-                        }else{
-                            bracketCount--;
-                        }
-                    }
-
-                    int index = temp.lastIndexOf("}");
-
-                    if (index == -1 ){
-                        sb.append(temp);
-                        //Log.d(LOG_TAG, sb.toString());
-                    }else{
-                        if( bracketCount == 0 ){
-                            sb.append(temp.substring(0, index + 1));
-                            Log.d(LOG_TAG, sb.toString());
-//                            Intent intent = new Intent(ActivityBase.BROADCAST_EVENT);
-//                            intent.putExtra("data", sb.toString());
-//                            sendBroadcast(intent);
-                            sb.setLength(0);
-                        }else{
-                            sb.append(temp);
-                            //Log.d(LOG_TAG, sb.toString());
-                        }
-                    }
                 }
             }
         }
-    }
 
+        public boolean isExternalStorageWritable() {
+            String state = Environment.getExternalStorageState();
+            if (Environment.MEDIA_MOUNTED.equals(state)) {
+                return true;
+            }
+            return false;
+        }
+
+        public File getAlbumStorageDir(Context context, String albumName) {
+            // Get the directory for the app's private pictures directory.
+            File file = new File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), albumName);
+            if (!file.mkdirs()) {
+                Log.e("PictureDemo", "Directory not created");
+            }
+            return file;
+        }
+
+        public File savePhoto(byte[] jpegBytes) {
+            String fname = String.format("Selfie-%d.jpg", new Date().getTime());
+
+            File photo = new File(getAlbumStorageDir(getApplicationContext(), "Minion"), fname);
+
+            if (photo.exists()) {
+                photo.delete();
+            }
+
+            try {
+                FileOutputStream fos = new FileOutputStream(photo.getPath());
+                fos.write(jpegBytes);
+                fos.close();
+            } catch (java.io.IOException e) {
+                Log.e("PictureDemo", "Exception in photoCallback", e);
+            }
+            return (null);
+        }
+    }
 }

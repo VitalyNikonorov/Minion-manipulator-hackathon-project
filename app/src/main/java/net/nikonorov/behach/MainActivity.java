@@ -1,8 +1,11 @@
 package net.nikonorov.behach;
 
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,14 +18,16 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.utils.UrlBeaconUrlCompressor;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.Collection;
+import java.util.Random;
 
 
 /**
  * Created by vitaly on 04.12.15.
  */
 public class MainActivity extends AppCompatActivity implements BeaconConsumer, RangeNotifier {
-
     private static String TAG = "MyLog";
     private BeaconManager mBeaconManager;
 
@@ -34,8 +39,6 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        //startService(new Intent(this, NetService.class).putExtra("type", TaskType.CONNECT));
 
         scanningFragment = new ScanningFragment();
         manipulatingFragment = new ManipulatingFragment();
@@ -68,13 +71,12 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     @Override
     public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
-        for (Beacon beacon: beacons) {
+        for (Beacon beacon : beacons) {
             if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
                 // This is a Eddystone-URL frame
                 final String url = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
                 Log.d(TAG, "I see a beacon transmitting a url: " + url +
                         " approximately " + beacon.getDistance() + " meters away.");
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -85,12 +87,13 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         }
     }
 
-    public void sendMessageToMinion(String data){
-        //MainActivity.this.startService(new Intent(MainActivity.this, NetService.class).putExtra("type", TaskType.SEND).putExtra("data", data));
+    public void sendMessageToMinion(String data) {
+        MainActivity.this.startService(new Intent(MainActivity.this, NetService.class).putExtra("type", TaskType.SEND).putExtra("data", data));
 
     }
 
-    public void connect(){
+    public void connect() {
+        startService(new Intent(this, NetService.class).putExtra("type", TaskType.CONNECT));
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
         transaction.replace(R.id.fragment_place, manipulatingFragment);
         transaction.commit();
@@ -101,5 +104,4 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         super.onPause();
         mBeaconManager.unbind(this);
     }
-
 }
