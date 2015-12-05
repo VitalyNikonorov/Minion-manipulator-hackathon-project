@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        startService(new Intent(this, NetService.class).putExtra("type", TaskType.CONNECT));
+        //startService(new Intent(this, NetService.class).putExtra("type", TaskType.CONNECT));
 
         scanningFragment = new ScanningFragment();
         manipulatingFragment = new ManipulatingFragment();
@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     }
 
     @Override
-    public void didRangeBeaconsInRegion(final Collection<Beacon> beacons, Region region) {
+    public void didRangeBeaconsInRegion(Collection<Beacon> beacons, Region region) {
         for (Beacon beacon: beacons) {
             if (beacon.getServiceUuid() == 0xfeaa && beacon.getBeaconTypeCode() == 0x10) {
                 // This is a Eddystone-URL frame
@@ -78,14 +78,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        double lessDistance = 1000000.1;
-                        String currentURL = null;
-                        for (Beacon beacon: beacons) {
-                            if (beacon.getDistance() < lessDistance){
-                                currentURL = UrlBeaconUrlCompressor.uncompress(beacon.getId1().toByteArray());
-                            }
-                        }
-                        scanningFragment.setURL(currentURL);
+                        scanningFragment.setURL(url);
                     }
                 });
             }
@@ -93,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     }
 
     public void sendMessageToMinion(String data){
-        MainActivity.this.startService(new Intent(MainActivity.this, NetService.class).putExtra("type", TaskType.SEND).putExtra("data", data));
+        //MainActivity.this.startService(new Intent(MainActivity.this, NetService.class).putExtra("type", TaskType.SEND).putExtra("data", data));
     }
 
     public void connect(){
