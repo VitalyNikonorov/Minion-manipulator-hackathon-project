@@ -2,6 +2,7 @@ package net.nikonorov.behach;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +35,8 @@ public class ScanningFragment extends Fragment {
         connectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Settings.setAddress(scanstatusTV.getText().toString());
+                Settings.setAddress(scanstatusTV.getText().toString().substring(7));
+                Log.d("MyLogs", Settings.getAddress());
                 Toast.makeText(getActivity(), "Connected to " + Settings.getAddress() , Toast.LENGTH_SHORT).show();
                         ((MainActivity) getActivity()).connect();
             }

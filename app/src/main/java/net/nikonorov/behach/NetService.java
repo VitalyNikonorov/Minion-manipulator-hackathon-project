@@ -22,7 +22,7 @@ import java.net.Socket;
 public class NetService extends Service {
 
     private String                  HOST    = "188.166.49.215";
-    private int                     PORT    = 7777;
+    private int                     PORT    = 53000;
     boolean                         isWork  = true;
 
     private InputStream is;
@@ -91,7 +91,7 @@ public class NetService extends Service {
 
             Log.d(LOG_TAG, "Run Connector");
             try {
-                socket = new Socket(HOST, PORT);
+                socket = new Socket(Settings.getAddress(), PORT);
                 is = socket.getInputStream();
 
                 OutputStream os = socket.getOutputStream();
