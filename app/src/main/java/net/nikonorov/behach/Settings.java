@@ -5,7 +5,7 @@ package net.nikonorov.behach;
  */
 public class Settings {
 
-    private static String ADDRESS;
+    private static String ADDRESS = "192.168.0.100";
 
     public static String getAddress() {
         return ADDRESS;
