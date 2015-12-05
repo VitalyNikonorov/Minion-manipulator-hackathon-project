@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
 
     public void sendMessageToMinion(String data){
         //MainActivity.this.startService(new Intent(MainActivity.this, NetService.class).putExtra("type", TaskType.SEND).putExtra("data", data));
+
     }
 
     public void connect(){

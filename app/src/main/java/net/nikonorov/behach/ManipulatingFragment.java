@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -21,6 +22,7 @@ public class ManipulatingFragment extends Fragment {
     ImageButton buttonLeft;
     ImageButton buttonRight;
     ImageButton buttonPhoto;
+    ImageButton buttonLower;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,36 +39,69 @@ public class ManipulatingFragment extends Fragment {
         buttonLeft = (ImageButton) view.findViewById(R.id.arrow_left);
         buttonRight = (ImageButton) view.findViewById(R.id.arrow_right);
         buttonPhoto = (ImageButton) view.findViewById(R.id.photo);
+        buttonLower = (ImageButton) view.findViewById(R.id.lower);
 
-        buttonDown.setOnClickListener(new View.OnClickListener() {
+        buttonUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Down Click", Toast.LENGTH_SHORT).show();
-                sendMessageToMinion("<down></down>");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Toast.makeText(getActivity(), "Up Click", Toast.LENGTH_SHORT).show();
+                        sendMessageToMinion("<forward>");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        sendMessageToMinion("</forward>");
+                        break;
+                }
+                return false;
             }
         });
 
-        buttonUp.setOnClickListener(new View.OnClickListener() {
+        buttonDown.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Up Click", Toast.LENGTH_SHORT).show();
-                sendMessageToMinion("<up></up>");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Toast.makeText(getActivity(), "Down Click", Toast.LENGTH_SHORT).show();
+                        sendMessageToMinion("<backward>");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        sendMessageToMinion("</backward>");
+                        break;
+                }
+                return false;
             }
         });
 
-        buttonLeft.setOnClickListener(new View.OnClickListener() {
+        buttonLeft.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Left Click", Toast.LENGTH_SHORT).show();
-                sendMessageToMinion("<left></left>");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Toast.makeText(getActivity(), "Left Click", Toast.LENGTH_SHORT).show();
+                        sendMessageToMinion("<left>");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        sendMessageToMinion("</left>");
+                        break;
+                }
+                return false;
             }
         });
 
-        buttonRight.setOnClickListener(new View.OnClickListener() {
+        buttonRight.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                Toast.makeText(getActivity(), "Right Click", Toast.LENGTH_SHORT).show();
-                sendMessageToMinion("<right></right>");
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        Toast.makeText(getActivity(), "Right Click", Toast.LENGTH_SHORT).show();
+                        sendMessageToMinion("<right>");
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        sendMessageToMinion("</right>");
+                        break;
+                }
+                return false;
             }
         });
 
@@ -74,7 +109,15 @@ public class ManipulatingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Photo Click", Toast.LENGTH_SHORT).show();
-                sendMessageToMinion("<take picture></take picture>");
+                sendMessageToMinion("<photo>");
+            }
+        });
+
+        buttonLower.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Lower Click", Toast.LENGTH_SHORT).show();
+                sendMessageToMinion("<lower>");
             }
         });
 
@@ -84,6 +127,5 @@ public class ManipulatingFragment extends Fragment {
     public void sendMessageToMinion(String data){
         MainActivity activity = (MainActivity) getActivity();
         activity.sendMessageToMinion(data);
-
     }
 }
