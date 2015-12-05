@@ -42,9 +42,48 @@ public class ManipulatingFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Down Click", Toast.LENGTH_SHORT).show();
+                sendMessageToMinion("<down></down>");
+            }
+        });
+
+        buttonUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Up Click", Toast.LENGTH_SHORT).show();
+                sendMessageToMinion("<up></up>");
+            }
+        });
+
+        buttonLeft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Left Click", Toast.LENGTH_SHORT).show();
+                sendMessageToMinion("<left></left>");
+            }
+        });
+
+        buttonRight.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Right Click", Toast.LENGTH_SHORT).show();
+                sendMessageToMinion("<right></right>");
+            }
+        });
+
+        buttonPhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Photo Click", Toast.LENGTH_SHORT).show();
+                sendMessageToMinion("<take picture></take picture>");
             }
         });
 
         return view;
+    }
+
+    public void sendMessageToMinion(String data){
+        MainActivity activity = (MainActivity) getActivity();
+        activity.sendMessageToMinion(data);
+
     }
 }

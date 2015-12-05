@@ -1,6 +1,7 @@
 package net.nikonorov.behach;
 
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        startService(new Intent(this, NetService.class).putExtra("type", TaskType.CONNECT));
 
         scanningFragment = new ScanningFragment();
         manipulatingFragment = new ManipulatingFragment();
@@ -81,6 +84,10 @@ public class MainActivity extends AppCompatActivity implements BeaconConsumer, R
                 });
             }
         }
+    }
+
+    public void sendMessageToMinion(String data){
+        MainActivity.this.startService(new Intent(MainActivity.this, NetService.class).putExtra("type", TaskType.SEND).putExtra("data", data));
     }
 
     public void connect(){
