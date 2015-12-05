@@ -23,6 +23,7 @@ public class ManipulatingFragment extends Fragment {
     ImageButton buttonRight;
     ImageButton buttonPhoto;
     ImageButton buttonLower;
+    ImageButton buttonMusic;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class ManipulatingFragment extends Fragment {
         buttonRight = (ImageButton) view.findViewById(R.id.arrow_right);
         buttonPhoto = (ImageButton) view.findViewById(R.id.photo);
         buttonLower = (ImageButton) view.findViewById(R.id.lower);
+        buttonMusic = (ImageButton) view.findViewById(R.id.music);
 
         buttonUp.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -118,6 +120,14 @@ public class ManipulatingFragment extends Fragment {
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "Lower Click", Toast.LENGTH_SHORT).show();
                 sendMessageToMinion("<lower>");
+            }
+        });
+
+        buttonMusic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getActivity(), "Music Click", Toast.LENGTH_SHORT).show();
+                sendMessageToMinion("<music>");
             }
         });
 

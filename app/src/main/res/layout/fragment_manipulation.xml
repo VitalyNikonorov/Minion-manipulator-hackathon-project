@@ -62,4 +62,14 @@
         android:src="@drawable/arrow_down"
         />
 
+    <ImageButton
+        android:id="@+id/music"
+        android:layout_width="128dp"
+        android:layout_height="64dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/holo_blue_dark"
+        android:src="@drawable/ic_my_library_music_white_48dp"
+        />
+
 </RelativeLayout>
